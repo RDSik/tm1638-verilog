@@ -1,6 +1,6 @@
 TOP := tm1638
 
-SRC_DIR := ./
+SRC_DIR := src/
 TB_DIR  := SRC_DIR
 
 SIM     := iverilog
