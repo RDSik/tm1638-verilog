@@ -45,15 +45,23 @@ module top(
     //   tm_rw      selects input or output
     reg tm_rw;
     wire dio_in, dio_out;
-    SB_IO #(
-        .PIN_TYPE(6'b101001),
-        .PULLUP(1'b1)
-    ) tm_dio_io (
-        .PACKAGE_PIN(tm_dio),
-        .OUTPUT_ENABLE(tm_rw),
-        .D_IN_0(dio_in),
-        .D_OUT_0(dio_out)
+
+    TLVDS_TBUF tm_dio_io (
+        .O   (dio_out),
+        .OB  (tm_dio ),
+        .I   (dio_in ),
+        .OEN (tm_rw  )
     );
+        
+    // SB_IO #(
+    //     .PIN_TYPE(6'b101001),
+    //     .PULLUP(1'b1)
+    // ) tm_dio_io (
+    //     .PACKAGE_PIN(tm_dio),
+    //     .OUTPUT_ENABLE(tm_rw),
+    //     .D_IN_0(dio_in),
+    //     .D_OUT_0(dio_out)
+    // );
 
     // setup tm1638 module with it's tristate IO
     //   tm_in      is read from module
