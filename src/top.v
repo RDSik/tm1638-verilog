@@ -1,6 +1,6 @@
 module top(
     input clk,
-
+    input rst,
     output reg tm_cs,
     output tm_clk,
     inout  tm_dio
@@ -28,8 +28,6 @@ module top(
         C_ADDR  = 8'b11000000;
 
     localparam CLK_DIV = 19; // speed of scanner
-
-    reg rst = HIGH;
 
     reg [5:0] instruction_step;
     reg [7:0] keys;
@@ -115,8 +113,6 @@ module top(
             instruction_step <= 6'b0;
             tm_cs <= HIGH;
             tm_rw <= HIGH;
-            rst <= LOW;
-
             counter <= 0;
             keys <= 8'b0;
             larson_dir <= 0;
