@@ -1,48 +1,26 @@
-DEVICE = hx8k
-PIN_DEF=ice40hx8k.pcf
+TOP := tm1638
 
-all: demos
+SRC_DIR := ./
+TB_DIR  := SRC_DIR
 
-# ------ TEMPLATES ------
-%.blif: %.v
-	yosys -q -p "synth_ice40 -blif $@" $^
+SIM  ?= iverilog
+WAVE := gtkwave
 
-%.asc: $(PIN_DEF) %.blif
-	arachne-pnr -d $(subst hx,,$(subst lp,,$(DEVICE))) -o $@ -p $^
+SRC_FILES += $(SRC_DIR)tm1638.v
+SRC_FILES += $(TB_DIRR)tm1638_tb.v
 
-%.bin: %.asc
-	icepack $^ $@
+.PHONY: all clean
 
-%.rpt: %.asc
-	icetime -d $(DEVICE) -mtr $@ $<
+all: build run wave
 
-%_tb.vvp: %_tb.v %.v
-	iverilog -o $@ $^
+build:
+	$(SIM) -o $(TOP_NAME) $(SRC_FILES)
 
-%_tb.vcd: %_tb.vvp
-	vvp -N $< +vcd=$@
+run:
+	vvp $(TOP_NAME)
 
-# ------ DEMOS ------
-demos: basic
+wave: 
+	$(WAVE) $(TOP)_tb.vcd
 
-#  BASIC
-basic: src/demos/basic.bin
-basic-prog: src/demos/basic.bin
-	iceprog $<
-src/demos/basic.bin: src/demos/basic.asc
-src/demos/basic.asc: src/demos/basic.blif
-src/demos/basic.blif: src/demos/basic.v src/tm1638.v
-
-# ------ TEST BENCHES ------
-tests: tm1638_tb
-
-tm1638_tb: src/tm1638_tb.vcd
-src/tm1638_tb.vcd: src/tm1638_tb.vvp
-src/tm1638_tb.vvp: src/tm1638_tb.v src/tm1638.v
-
-# ------ HELPERS ------
 clean:
-	rm -f src/**/*.blif src/**/*.asc src/**/*.bin src/**/*.vvp src/**/*.vcd
-
-.SECONDARY:
-.PHONY: all demos tests clean
+	rm *.vcd
