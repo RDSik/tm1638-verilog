@@ -7,7 +7,7 @@ SIM  := iverilog
 WAVE := gtkwave
 
 SRC_FILES += $(SRC_DIR)tm1638.v
-SRC_FILES += $(TB_DIRR)tm1638_tb.v
+SRC_FILES += $(TB_DIR)tm1638_tb.v
 
 .PHONY: all clean
 
