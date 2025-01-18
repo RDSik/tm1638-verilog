@@ -7,13 +7,12 @@ The driver module itself just handles the timing and communication over the wire
 
 The included demo module is an example of the type of state machine you can build to just continuously scan the keypad for new key presses and equally update the display with new values.
 
-The Makefile has been set up for yosys and arachne-pnr, along with and icarus verilog and GtkWave compatible testbench. The included demo is configured for the iCE40HX8K-B Breakoutboard and the constraints file expects the LED&KEYs board to be connected as follows:
-
-TM1638 Pins | iCE40HX8K Pins
+TM1638 Pins | Tang Primer 20K Pins
 ------------ | -------------
-CLK | P1
-DIO | P2
-DTB | R1
+CLK | H11
+RST | TODO
+DIO | TODO
+DTB | TODO
 
 Here is an example of the testbench, it is writing 0x40, 0xAA, 0x55 to the TM1638, and reading back 0xAA and 0x55 from the TM1638.
 
