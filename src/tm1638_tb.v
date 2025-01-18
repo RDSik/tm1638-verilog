@@ -31,10 +31,6 @@ module tm1638_tb;
 
     initial
     begin
-        if ($value$plusargs("vcd=%s", vcdfile)) begin
-			$dumpfile(vcdfile);
-			$dumpvars(0, tm1638_tb);
-		end
         clk = 0;
         rst = 0;
         rw = 1;
