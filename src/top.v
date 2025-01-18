@@ -45,7 +45,7 @@ module top (
     wire dio_in, dio_out;
 
     assign dio_in = tm_dio;
-    assign tm_dio = tm_rw ? dio_out: 1'bz;
+    assign tm_dio = tm_rw ? dio_out : 1'bz;
 
     // setup tm1638 module with it's tristate IO
     //   tm_in      is read from module
