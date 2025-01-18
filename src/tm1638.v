@@ -1,4 +1,4 @@
-module tm1638(
+module tm1638 (
     input clk,
     input rst,
 
@@ -11,7 +11,7 @@ module tm1638(
     output sclk,
     input  dio_in,
     output dio_out
-    );
+);
 
     localparam CLK_DIV = 3; // seems happy at 12MHz with 3
     localparam CLK_DIV1 = CLK_DIV - 1;
