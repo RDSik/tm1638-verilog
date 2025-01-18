@@ -10,8 +10,8 @@ The included demo module is an example of the type of state machine you can buil
 TM1638 Pins | Tang Primer 20K Pins
 ------------ | -------------
 CLK | M15
-DIO | J16
-STB | R11
+DIO | R11
+STB | J16
 
 Here is an example of the testbench, it is writing 0x40, 0xAA, 0x55 to the TM1638, and reading back 0xAA and 0x55 from the TM1638.
 
