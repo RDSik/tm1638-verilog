@@ -26,7 +26,8 @@ wave:
 	$(WAVE) $(TOP)_tb.vcd
 
 program:
-	$(PROGRAM) -b $(BOARD) -m $(TOP).fs
+	$(PROGRAM) -b $(BOARD) -m syn/tm1638/impl/pnr/$(TOP).fs
 
 clean:
-	rm *.vcd
+	rm $(TOP)
+	rm $(TOP).vcd

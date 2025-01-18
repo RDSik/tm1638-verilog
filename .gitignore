@@ -1,5 +1,3 @@
-*.asc
-*.bin
-*.blif
+tm1638
 *.vvp
 *.vcd
