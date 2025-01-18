@@ -1,4 +1,5 @@
 `timescale 10 ns / 1 ns
+
 module tm1638_tb;
     reg clk, rst;
 
@@ -121,12 +122,11 @@ module tm1638_tb;
         $finish;
     end
 
-    always @(posedge clk)
-    begin
-        ;
-    end
+    always #5 clk = !clk;
 
-    always
-        #5 clk = !clk;
+    initial begin
+        $dumpfile("tm1638_tb.vcd");
+        $dumpvars(0, tm1638_tb);
+    end
 
 endmodule
