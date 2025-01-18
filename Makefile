@@ -3,7 +3,7 @@ TOP := tm1638
 SRC_DIR := ./
 TB_DIR  := SRC_DIR
 
-SIM  ?= iverilog
+SIM  := iverilog
 WAVE := gtkwave
 
 SRC_FILES += $(SRC_DIR)tm1638.v
