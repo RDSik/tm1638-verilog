@@ -1,5 +1,5 @@
 # tm1638-verilog
-This is system verilog TM1638 LED driver for Tang Primer 20k Dock, based on https://github.com/chipdesignschool/basics-graphics-music.git and https://github.com/alangarf/tm1638-verilog.
+This is system verilog TM1638 LED driver for Tang Primer 20k Dock, based on https://github.com/chipdesignschool/basics-graphics-music/tree/main/peripherals and https://github.com/alangarf/tm1638-verilog.
 
 TM1638 Pins | Tang Primer 20K Pins
 ------------ | -------------
