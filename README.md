@@ -8,7 +8,7 @@ DIO | R11
 STB | J16
 
 
-1. For building project use:
+1. For building project (need Gowind IDE) use:
 ```bash
 make project
 ```
