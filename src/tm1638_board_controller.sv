@@ -29,9 +29,6 @@ module tm1638_board_controller
     output logic [           7:0] keys,
     output                        sio_clk,
     output logic                  sio_stb,
-    // input                         sio_data_in,
-    // output                        sio_data_out,
-    // output                        sio_data_out_en
     inout                         sio_data
 );
 
@@ -89,9 +86,6 @@ module tm1638_board_controller
 
     ////////////// TM1563 dio //////////////////
 
-    // assign dio_in          = sio_data_in;
-    // assign sio_data_out    = dio_out;
-    // assign sio_data_out_en = tm_rw;
     assign sio_data = tm_rw ? dio_out : 'z;
     assign dio_in   = sio_data;
 
