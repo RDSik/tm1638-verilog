@@ -2,6 +2,7 @@ TOP := tm1638
 
 SRC_DIR := src/
 TB_DIR  := $(SRC_DIR)
+SYN_DIR := syn/
 
 SIM     := iverilog
 WAVE    := gtkwave
@@ -27,12 +28,13 @@ wave:
 	$(WAVE) $(TOP)_tb.vcd
 
 project:
-	cd syn && \
+	cd $(SYN_DIR) && \
 	gw_sh $(TCL)
 
 program:
-	$(PROGRAM) -b $(BOARD) -m syn/project/impl/pnr/$(TOP).fs
+	$(PROGRAM) -b $(BOARD) -m $(SYN_DIR)project/impl/pnr/$(TOP).fs
 
 clean:
 	rm $(TOP)
-	rm $(TOP).vcd
+	rm $(TOP)_tb.vcd
+	rm -rf $(SYN_DIR)project
