@@ -14,7 +14,7 @@ Copyright Contributors to the basics-graphics-music project.
 ///////////////////////////////////////////////////////////////////////////////////
 module tm1638_sio
 # (
-    parameter clk_mhz = 50
+    parameter clk_mhz = 27
 )
 (
     input          clk,

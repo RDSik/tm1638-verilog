@@ -16,7 +16,7 @@ Copyright Contributors to the basics-graphics-music project.
 
 module tm1638_board_controller
 # (
-    parameter clk_mhz = 50,
+    parameter clk_mhz = 27,
               w_digit = 8,
               w_seg   = 8
 )
