@@ -7,9 +7,10 @@ SIM     := iverilog
 WAVE    := gtkwave
 PROGRAM := openFPGALoader
 
+TCL   := project.tcl
 BOARD := tangprimer20k
 
-SRC_FILES += $(SRC_DIR)tm1638.v
+SRC_FILES += $(SRC_DIR)tm1638_sio.sv
 SRC_FILES += $(TB_DIR)tm1638_tb.v
 
 .PHONY: all clean
@@ -17,7 +18,7 @@ SRC_FILES += $(TB_DIR)tm1638_tb.v
 all: build run wave
 
 build:
-	$(SIM) -o $(TOP) $(SRC_FILES)
+	$(SIM) -g2005-sv -o $(TOP) $(SRC_FILES)
 
 run:
 	vvp $(TOP)
@@ -25,8 +26,12 @@ run:
 wave: 
 	$(WAVE) $(TOP)_tb.vcd
 
+project:
+	cd syn && \
+	gw_sh $(TCL)
+
 program:
-	$(PROGRAM) -b $(BOARD) -m syn/tm1638/impl/pnr/$(TOP).fs
+	$(PROGRAM) -b $(BOARD) -m syn/project/impl/pnr/$(TOP).fs
 
 clean:
 	rm $(TOP)

@@ -1,33 +1,51 @@
-module tm1638 (
-    input clk,
-    input rst,
+/*============================================================================
+SPDX-License-Identifier: Apache-2.0
 
-    input data_latch,
-    inout [7:0] data,
-    input rw,
+Copyright 2023 Alexander Kirichenko
+Copyright 2023 Ruslan Zalata (HCW-132 variation support)
 
-    output busy,
+Based on https://github.com/alangarf/tm1638-verilog
+Copyright 2017 Alan Garfield
+Copyright Contributors to the basics-graphics-music project.
+==============================================================================*/
 
-    output sclk,
-    input  dio_in,
-    output reg dio_out
+///////////////////////////////////////////////////////////////////////////////////
+//           TM1638 SIO driver for tm1638_board_controller top module
+///////////////////////////////////////////////////////////////////////////////////
+module tm1638_sio
+# (
+    parameter clk_mhz = 50
+)
+(
+    input          clk,
+    input          rst,
+
+    input          data_latch,
+    input  [7:0]   data_in,
+    output [7:0]   data_out,
+    input          rw,
+
+    output         busy,
+
+    output         sclk,
+    input          dio_in,
+    output logic   dio_out
 );
 
-    localparam CLK_DIV = 3; // seems happy at 12MHz with 3
-    localparam CLK_DIV1 = CLK_DIV - 1;
+    localparam CLK_DIV1 = $clog2 (clk_mhz*1000/2/700) - 1; // 700 kHz is recommended SIO clock
     localparam [1:0]
         S_IDLE      = 2'h0,
         S_WAIT      = 2'h1,
         S_TRANSFER  = 2'h2;
 
-    reg [1:0] cur_state, next_state;
-    reg [CLK_DIV1:0] sclk_d, sclk_q;
-    reg [7:0] data_d, data_q, data_out_d, data_out_q;
-    reg dio_out_d;
-    reg [2:0] ctr_d, ctr_q;
+    logic [       1:0] cur_state, next_state;
+    logic [CLK_DIV1:0] sclk_d, sclk_q;
+    logic [       7:0] data_d, data_q, data_out_d, data_out_q;
+    logic              dio_out_d;
+    logic [       2:0] ctr_d, ctr_q;
 
-    // output read data if we're reading
-    assign data = rw ? 8'hZZ : data_out_q;
+    // output read data
+    assign data_out = data_out_q;
 
     // we're busy if we're not idle
     assign busy = cur_state != S_IDLE;
@@ -35,7 +53,7 @@ module tm1638 (
     // tick the clock if we're transfering data
     assign sclk = ~((~sclk_q[CLK_DIV1]) & (cur_state == S_TRANSFER));
 
-    always @(*)
+    always_comb
     begin
         sclk_d = sclk_q;
         data_d = data_q;
@@ -50,13 +68,13 @@ module tm1638 (
                 if (data_latch) begin
                     // if we're reading, set to zero, otherwise latch in
                     // data to send
-                    data_d = rw ? data : 8'b0;
+                    data_d = data_in;
                     next_state = S_WAIT;
                 end
             end
 
             S_WAIT: begin
-                sclk_d = sclk_q + 1;
+                sclk_d = sclk_q + 1'd1;
                 // wait till we're halfway into clock pulse
                 if (sclk_q == {1'b0, {CLK_DIV1{1'b1}}}) begin
                     sclk_d = 0;
@@ -65,7 +83,7 @@ module tm1638 (
             end
 
             S_TRANSFER: begin
-                sclk_d = sclk_q + 1;
+                sclk_d = sclk_q + 1'd1;
                 if (sclk_q == 0) begin
                     // start of clock pulse, output MSB
                     dio_out_d = data_q[0];
@@ -76,7 +94,7 @@ module tm1638 (
 
                 end else if (&sclk_q) begin
                     // end of pulse, tick the counter
-                    ctr_d = ctr_q + 1;
+                    ctr_d = ctr_q + 1'd1;
 
                     if (&ctr_q) begin
                         // last bit sent, switch back to idle
@@ -84,7 +102,7 @@ module tm1638 (
                         next_state = S_IDLE;
                         data_out_d = data_q;
 
-                        dio_out_d = 0;
+                        dio_out_d = '0;
                     end
                 end
             end

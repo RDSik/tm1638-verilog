@@ -12,11 +12,11 @@ module tm1638_tb;
     wire busy, sclk, dio_out;
     reg dio_in;
 
-    tm1638 u_tm1638 (
+    tm1638_sio u_tm1638 (
         .clk            (clk),
         .rst            (rst),
         .data_latch     (data_latch),
-        .data           (data_sig),
+        .data_in        (data_sig),
         .rw             (rw),
         .busy           (busy),
         .sclk           (sclk),
