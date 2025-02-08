@@ -50,12 +50,12 @@ seven_segment_display #(
     .w_digit (w_digit),
     .clk_mhz (clk_mhz)
 ) i_7segment (
-    .clk      (clk                      ),
-    .rst      (rst                      ),
-    .number   (w_display_number' (cnt_2)),
-    .dots     (w_digit' (0)             ),
-    .abcdefgh (abcdefgh                 ),
-    .digit    (digit                    )
+    .clk      (clk                     ),
+    .rst      (rst                     ),
+    .number   (w_display_number'(cnt_2)),
+    .dots     (w_digit' (0)            ),
+    .abcdefgh (abcdefgh                ),
+    .digit    (digit                   )
 );
 
 endmodule
