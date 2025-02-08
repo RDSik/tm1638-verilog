@@ -1,7 +1,7 @@
 module seven_segment_display
 # (
     parameter w_digit   = 2,
-    parameter clk_mhz   = 50,
+    parameter clk_mhz   = 27,
     parameter update_hz = 120
 )
 (
