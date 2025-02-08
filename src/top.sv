@@ -42,6 +42,7 @@ tm1638_board_controller #(
 );
 
 driver #(
+    .clk_mhz (clk_mhz   ),
     .w_digit (w_tm_digit),
     .w_led   (w_tm_led  ),
     .w_key   (w_tm_key  )

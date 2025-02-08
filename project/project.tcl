@@ -2,6 +2,7 @@ create_project -name tm1638 -dir project -pn GW2A-LV18PG256C8/I7 -device_version
 add_file ../../src/tm1638_board_controller.sv
 add_file ../../src/tm1638_sio.sv
 add_file ../../src/tm1638_registers.sv
+add_file ../../src/seven_segment_display.sv
 add_file ../../src/config.svh
 add_file ../../src/swap_bits.svh
 add_file ../../src/top.sv
