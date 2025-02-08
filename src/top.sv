@@ -4,7 +4,7 @@ module top #(
     parameter clk_mhz = 27
 ) (
     input        clk,
-    input        rst,
+    input        key,
     output       sio_clk,
     output logic sio_stb,
     inout        sio_data
@@ -19,6 +19,9 @@ wire [w_tm_key   - 1:0] tm_key;
 wire [w_tm_led   - 1:0] tm_led;
 
 wire [7:0] abcdefgh;
+wire       rst;
+
+assign rst = ~key;
 
 wire [$left (abcdefgh):0] hgfedcba;
 `SWAP_BITS (hgfedcba, abcdefgh);
@@ -31,7 +34,7 @@ tm1638_board_controller
 i_tm1638
 (
     .clk       ( clk         ),
-    .rst       ( ~rst        ),
+    .rst       ( rst         ),
     .hgfedcba  ( hgfedcba    ),
     .digit     ( tm_digit    ),
     .ledr      ( tm_led      ),
@@ -43,8 +46,8 @@ i_tm1638
 
 logic [31:0] cnt;
 
-always_ff @ (posedge clk or negedge rst)
-    if (~rst)
+always_ff @ (posedge clk or posedge rst)
+    if (rst)
         cnt <= '0;
     else
         cnt <= cnt + 1'd1;
@@ -55,8 +58,8 @@ wire button_on = | tm_key;
 
 logic [w_tm_digit - 1:0] shift_reg;
 
-always_ff @ (posedge clk or negedge rst)
-    if (~rst)
+always_ff @ (posedge clk or posedge rst)
+    if (rst)
       shift_reg <= w_tm_digit' (1);
     else if (enable)
       shift_reg <= { shift_reg [0], shift_reg [w_tm_digit - 1:1] };
