@@ -6,9 +6,9 @@ module driver #(
 ) (
     input  logic               clk,
     input  logic               rst,
+    output logic [w_digit-1:0] digit,
     input  logic [w_key-1:0]   key,
     output logic [w_led-1:0]   led,
-    output logic [w_digit-1:0] digit,
     output logic [7:0]         abcdefgh
 );
 
