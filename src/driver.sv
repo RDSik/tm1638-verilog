@@ -12,10 +12,12 @@ module driver #(
     output logic [7:0]         abcdefgh
 );
 
-logic [31:0] period;
-
 localparam min_period = clk_mhz * 1000 * 1000 / 50,
            max_period = clk_mhz * 1000 * 1000 *  3;
+
+logic [31:0] period;
+logic [31:0] cnt_1;
+logic [31:0] cnt_2;
 
 always_ff @ (posedge clk or posedge rst)
     if (rst)
@@ -25,8 +27,6 @@ always_ff @ (posedge clk or posedge rst)
     else if (key [1] & period != min_period)
         period <= period - 32'h1;
 
-logic [31:0] cnt_1;
-
 always_ff @ (posedge clk or posedge rst)
     if (rst)
         cnt_1 <= '0;
@@ -34,8 +34,6 @@ always_ff @ (posedge clk or posedge rst)
         cnt_1 <= period - 1'b1;
     else
         cnt_1 <= cnt_1 - 1'd1;
-
-logic [31:0] cnt_2;
 
 always_ff @ (posedge clk or posedge rst)
     if (rst)
