@@ -1,5 +1,5 @@
 IO_LOC  "clk"      H11;
-IO_LOC  "rst"      C7;
+IO_LOC  "key"      C7;
 IO_LOC  "sio_stb"  J16;
 IO_LOC  "sio_clk"  M15;
 IO_LOC  "sio_data" R11;
