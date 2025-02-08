@@ -9,6 +9,8 @@ Copyright 2017 Alan Garfield
 Copyright Contributors to the basics-graphics-music project.
 ==============================================================================*/
 
+`include "config.svh"
+
 module tm1638_registers
 # (
     parameter                     w_digit = 8,
@@ -23,8 +25,11 @@ module tm1638_registers
     output [w_digit - 1:0][ w_seg   - 1:0] hex
 );
 
-    // localparam static_hex = 0;
+`ifdef EMULATE_DYNAMIC_7SEG_ON_STATIC_WITHOUT_STICKY_FLOPS
+    localparam static_hex = 0;
+`else
     localparam static_hex = 1;
+`endif
 
     wire [0:w_digit-1][w_seg - 1:0] init76543210 =
 

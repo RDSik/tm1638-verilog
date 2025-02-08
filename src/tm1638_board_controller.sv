@@ -14,6 +14,8 @@ Copyright Contributors to the basics-graphics-music project.
 //                              Top module
 ///////////////////////////////////////////////////////////////////////////////////
 
+`include "config.svh"
+
 module tm1638_board_controller
 # (
     parameter clk_mhz = 27,
@@ -26,10 +28,20 @@ module tm1638_board_controller
     input        [           7:0] hgfedcba,
     input        [ w_digit - 1:0] digit,
     input        [           7:0] ledr,
+    `ifdef USE_HCW132_VARIANT_OF_TM1638_BOARD_CONTROLLER_MODULE
+    output logic [          15:0] keys,
+    `else
     output logic [           7:0] keys,
+    `endif
     output                        sio_clk,
     output logic                  sio_stb,
+    `ifdef SPLIT_TM1638_DIO_INOUT_SIGNAL
+    input                         sio_data_in,
+    output                        sio_data_out,
+    output                        sio_data_out_en
+    `else
     inout                         sio_data
+    `endif
 );
 
     localparam
@@ -77,17 +89,32 @@ module tm1638_board_controller
     wire   [7:0] tm_out;
 
     ///////////// RESET synhronizer ////////////
+
+    `ifdef NO_RESET_SYNCHRONIZER
+
+    wire reset_syn2 = rst;
+
+    `else
+
     logic             reset_syn1;
-    logic             reset_syn2 = 0;
+    logic             reset_syn2 = 0; // TODO: REMOVE initialization - is not synthesizable in ASIC
     always @(posedge clk) begin
         reset_syn1 <= rst;
         reset_syn2 <= reset_syn1;
     end
 
+    `endif
+
     ////////////// TM1563 dio //////////////////
 
+    `ifdef SPLIT_TM1638_DIO_INOUT_SIGNAL
+    assign dio_in          = sio_data_in;
+    assign sio_data_out    = dio_out;
+    assign sio_data_out_en = tm_rw;
+    `else
     assign sio_data = tm_rw ? dio_out : 'z;
     assign dio_in   = sio_data;
+    `endif
 
     tm1638_sio
     # (
@@ -101,7 +128,6 @@ module tm1638_board_controller
         .data_latch ( tm_latch   ),
         .data_in    ( tm_in      ),
         .data_out   ( tm_out     ),
-        .rw         ( tm_rw      ),
 
         .busy       ( busy       ),
 
@@ -150,16 +176,19 @@ module tm1638_board_controller
 
     // controller FSM
 
-    always @(posedge clk or posedge reset_syn2)
+    always @(posedge clk)
     begin
         if (reset_syn2) begin
-            instruction_step <= 'b0;
+            instruction_step <= '0;
             sio_stb          <= HIGH;
             tm_rw            <= HIGH;
 
-            counter          <= 'd0;
-            keys             <= 'b0;
-            led_on           <= 'b0;
+            counter          <= '0;
+            keys             <= '0;
+            led_on           <= '0;
+
+            tm_latch         <= 1'b0;
+            tm_in            <= '0;
 
         end else begin
 
@@ -175,6 +204,16 @@ module tm1638_board_controller
                     2:  {tm_latch, tm_in}  <= {HIGH, C_READ_KEYS}; // read mode
                     3:  {tm_latch, tm_rw}  <= {HIGH, LOW};
 
+                    `ifdef USE_HCW132_VARIANT_OF_TM1638_BOARD_CONTROLLER_MODULE
+                    //  read back keys S1 - S16
+                    4:  {keys[0], keys[1], keys[8], keys[9]} <= {tm_out[2], tm_out[6], tm_out[1], tm_out[5]};
+                    5:  tm_latch           <= HIGH;
+                    6:  {keys[2], keys[3], keys[10], keys[11]} <= {tm_out[2], tm_out[6], tm_out[1], tm_out[5]};
+                    7:  tm_latch           <= HIGH;
+                    8:  {keys[4], keys[5], keys[12], keys[13]} <= {tm_out[2], tm_out[6], tm_out[1], tm_out[5]};
+                    9:  tm_latch           <= HIGH;
+                    10:  {keys[6], keys[7], keys[14], keys[15]} <= {tm_out[2], tm_out[6], tm_out[1], tm_out[5]};
+                    `else
                     //  read back keys S1 - S8
                     4:  {keys[7], keys[3]} <= {tm_out[0], tm_out[4]};
                     5:  tm_latch           <= HIGH;
@@ -183,6 +222,7 @@ module tm1638_board_controller
                     8:  {keys[5], keys[1]} <= {tm_out[0], tm_out[4]};
                     9:  tm_latch           <= HIGH;
                     10: {keys[4], keys[0]} <= {tm_out[0], tm_out[4]};
+                    `endif
                     11: {counter, sio_stb} <= {COUNTER_0, HIGH}; // initiate 1us delay
                     12: {instruction_step} <= (stb_delay_complete ? 6'd13 : 6'd12); // loop till delay complete
 
@@ -195,6 +235,25 @@ module tm1638_board_controller
                     17: {sio_stb, tm_rw}   <= {LOW, HIGH};
                     18: {tm_latch, tm_in}  <= {HIGH, C_SET_ADDR_0}; // set addr 0 pos
 
+                    `ifdef USE_HCW132_VARIANT_OF_TM1638_BOARD_CONTROLLER_MODULE
+                    // HCW-132 has very weird display map
+                    19: display_digit({hex[7][0],hex[6][0],hex[5][0],hex[4][0],hex[3][0],hex[2][0],hex[1][0],hex[0][0]});
+                    20: display_digit(8'b00000000);
+                    21: display_digit({hex[7][1],hex[6][1],hex[5][1],hex[4][1],hex[3][1],hex[2][1],hex[1][1],hex[0][1]});
+                    22: display_digit(8'b00000000);
+                    23: display_digit({hex[7][2],hex[6][2],hex[5][2],hex[4][2],hex[3][2],hex[2][2],hex[1][2],hex[0][2]});
+                    24: display_digit(8'b00000000);
+                    25: display_digit({hex[7][3],hex[6][3],hex[5][3],hex[4][3],hex[3][3],hex[2][3],hex[1][3],hex[0][3]});
+                    26: display_digit(8'b00000000);
+                    27: display_digit({hex[7][4],hex[6][4],hex[5][4],hex[4][4],hex[3][4],hex[2][4],hex[1][4],hex[0][4]});
+                    28: display_digit(8'b00000000);
+                    29: display_digit({hex[7][5],hex[6][5],hex[5][5],hex[4][5],hex[3][5],hex[2][5],hex[1][5],hex[0][5]});
+                    30: display_digit(8'b00000000);
+                    31: display_digit({hex[7][6],hex[6][6],hex[5][6],hex[4][6],hex[3][6],hex[2][6],hex[1][6],hex[0][6]});
+                    32: display_digit(8'b00000000);
+                    33: display_digit({hex[7][7],hex[6][7],hex[5][7],hex[4][7],hex[3][7],hex[2][7],hex[1][7],hex[0][7]});
+                    34: display_digit(8'b00000000);
+                    `else
                     19: display_digit(hex[7]); // Digit 1
                     20: display_led(3'd7);        // LED 8
 
@@ -218,6 +277,7 @@ module tm1638_board_controller
 
                     33: display_digit(hex[0]); // Digit 8
                     34: display_led(3'd0);        // LED 1
+                    `endif
 
                     35: {counter, sio_stb} <= {COUNTER_0, HIGH}; // initiate 1us delay
                     36: {instruction_step} <= (stb_delay_complete ? 6'd37 : 6'd36); // loop till delay complete
