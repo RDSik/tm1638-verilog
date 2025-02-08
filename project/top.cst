@@ -4,5 +4,5 @@ IO_LOC  "sio_stb"  J16;
 IO_LOC  "sio_clk"  M15;
 IO_LOC  "sio_data" R11;
 
-IO_PORT "sio_stb"   IO_TYPE=LVCMOS33;
-IO_PORT "sio_clk"   IO_TYPE=LVCMOS33;
+IO_PORT "sio_stb" IO_TYPE=LVCMOS33;
+IO_PORT "sio_clk" IO_TYPE=LVCMOS33;

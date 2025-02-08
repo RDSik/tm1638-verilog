@@ -1,8 +1,8 @@
 TOP := tm1638
 
-SRC_DIR := src/
-TB_DIR  := $(SRC_DIR)
-SYN_DIR := syn/
+SRC_DIR     := src
+TB_DIR      := $(SRC_DIR)
+PROJECT_DIR := project
 
 SIM     := iverilog
 WAVE    := gtkwave
@@ -11,8 +11,8 @@ PROGRAM := openFPGALoader
 TCL   := project.tcl
 BOARD := tangprimer20k
 
-SRC_FILES += $(SRC_DIR)tm1638_sio.sv
-SRC_FILES += $(TB_DIR)tm1638_tb.v
+SRC_FILES += $(SRC_DIR)/tm1638_sio.sv
+SRC_FILES += $(TB_DIR)/tm1638_tb.v
 
 .PHONY: all clean
 
@@ -27,14 +27,19 @@ run:
 wave: 
 	$(WAVE) $(TOP)_tb.vcd
 
-project:
-	cd $(SYN_DIR) && \
-	gw_sh $(TCL)
+project: 
+	gw_sh $(PROJECT_DIR)/$(TCL)
 
 program:
-	$(PROGRAM) -b $(BOARD) -m $(SYN_DIR)project/impl/pnr/$(TOP).fs
+	$(PROGRAM) -b $(BOARD) -m $(PROJECT_DIR)/project/impl/pnr/$(TOP).fs
 
 clean:
+ifeq ($(OS), Windows_NT)
+	del $(TOP)
+	del $(TOP)_tb.vcd
+	rmdir /s /q $(PROJECT_DIR)\$(TOP)
+else
 	rm $(TOP)
 	rm $(TOP)_tb.vcd
-	rm -rf $(SYN_DIR)project
+	rm -rf $(PROJECT_DIR)/$(TOP)
+endif
