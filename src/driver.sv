@@ -53,7 +53,7 @@ seven_segment_display #(
     .clk      (clk                     ),
     .rst      (rst                     ),
     .number   (w_display_number'(cnt_2)),
-    .dots     (w_digit' (0)            ),
+    .dots     (w_digit'(0)             ),
     .abcdefgh (abcdefgh                ),
     .digit    (digit                   )
 );
