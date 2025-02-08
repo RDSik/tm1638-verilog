@@ -49,7 +49,8 @@ assign led = cnt_2;
 localparam w_display_number = w_digit * 4;
 
 seven_segment_display #(
-    w_digit
+    .w_digit (w_digit),
+    .clk_mhz (clk_mhz)
 ) i_7segment (
     .clk      (clk                      ),
     .rst      (rst                      ),
