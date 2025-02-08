@@ -7,7 +7,6 @@ CLK | M15
 DIO | R11
 STB | J16
 
-
 1. For building project (need Gowind IDE) use:
 ```bash
 make project
