@@ -5,6 +5,7 @@ add_file ../../src/tm1638_registers.sv
 add_file ../../src/config.svh
 add_file ../../src/swap_bits.svh
 add_file ../../src/top.sv
+add_file ../../src/driver.sv
 add_file ../top.sdc
 add_file ../top.cst
 set_option -top_module top
