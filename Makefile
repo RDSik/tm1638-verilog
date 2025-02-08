@@ -14,7 +14,7 @@ BOARD := tangprimer20k
 SRC_FILES += $(SRC_DIR)/tm1638_sio.sv
 SRC_FILES += $(TB_DIR)/tm1638_tb.v
 
-.PHONY: all clean
+.PHONY: all project program clean
 
 all: build run wave
 
@@ -27,11 +27,11 @@ run:
 wave:
 	$(WAVE) $(TOP)_tb.vcd
 
-project:
+project: 
 	gw_sh $(PROJECT_DIR)/$(TCL)
 
 program:
-	$(PROGRAM) -b $(BOARD) -m $(PROJECT_DIR)/project/impl/pnr/$(TOP).fs
+	$(PROGRAM) -b $(BOARD) -m $(PROJECT_DIR)/$(TOP)/impl/pnr/$(TOP).fs
 
 clean:
 ifeq ($(OS), Windows_NT)

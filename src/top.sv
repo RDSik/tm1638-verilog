@@ -31,7 +31,7 @@ tm1638_board_controller
 i_tm1638
 (
     .clk       ( clk         ),
-    .rst       ( rst         ),
+    .rst       ( ~rst        ),
     .hgfedcba  ( hgfedcba    ),
     .digit     ( tm_digit    ),
     .ledr      ( tm_led      ),
@@ -41,13 +41,10 @@ i_tm1638
     .sio_data  ( sio_data    )
 );
 
-assign abcdefgh = '0;
-assign tm_digit = '0;
-
 logic [31:0] cnt;
 
-always_ff @ (posedge clk or posedge rst)
-    if (rst)
+always_ff @ (posedge clk or negedge rst)
+    if (~rst)
         cnt <= '0;
     else
         cnt <= cnt + 1'd1;
@@ -56,14 +53,38 @@ wire enable = (cnt [22:0] == '0);
 
 wire button_on = | tm_key;
 
-logic [w_tm_led - 1:0] shift_reg;
+logic [w_tm_digit - 1:0] shift_reg;
 
-always_ff @ (posedge clk or posedge rst)
-    if (rst)
-        shift_reg <= '1;
+always_ff @ (posedge clk or negedge rst)
+    if (~rst)
+      shift_reg <= w_tm_digit' (1);
     else if (enable)
-        shift_reg <= { button_on, shift_reg [w_tm_led - 1:1] };
+      shift_reg <= { shift_reg [0], shift_reg [w_tm_digit - 1:1] };
 
-assign tm_led = shift_reg;
+assign tm_led = w_tm_led' (shift_reg);
+
+typedef enum bit [7:0]
+    {
+        F     = 8'b1000_1110,
+        P     = 8'b1100_1110,
+        G     = 8'b1011_1100,
+        A     = 8'b1110_1110,
+        space = 8'b0000_0000
+    }
+    seven_seg_encoding_e;
+
+seven_seg_encoding_e letter;
+
+always_comb
+    case (4' (shift_reg))
+    4'b1000: letter = F;
+    4'b0100: letter = P;
+    4'b0010: letter = G;
+    4'b0001: letter = A;
+    default: letter = space;
+    endcase
+
+assign abcdefgh = letter;
+assign tm_digit = shift_reg;
 
 endmodule
