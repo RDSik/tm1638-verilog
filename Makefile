@@ -24,10 +24,10 @@ build:
 run:
 	vvp $(TOP)
 
-wave: 
+wave:
 	$(WAVE) $(TOP)_tb.vcd
 
-project: 
+project:
 	gw_sh $(PROJECT_DIR)/$(TCL)
 
 program:
