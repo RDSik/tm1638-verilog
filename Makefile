@@ -9,7 +9,7 @@ WAVE    := gtkwave
 PROGRAM := openFPGALoader
 
 TCL   := project.tcl
-BOARD := tangprimer20k
+BOARD ?= tangprimer20k
 
 SRC_FILES += $(SRC_DIR)/tm1638_sio.sv
 SRC_FILES += $(TB_DIR)/tm1638_tb.v
